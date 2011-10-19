@@ -10,7 +10,7 @@ Installation
 Add ``partner_feeds`` to the ``INSTALLED_APPS`` in ``settings.py``::
 
 	# settings.py
-		INSTALLED_APPS = (
+	INSTALLED_APPS = (
 		...
 		"partner_feeds",
 		...
