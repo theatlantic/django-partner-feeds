@@ -44,7 +44,11 @@ def update_posts_for_feed(partner):
 
 			# try to get the date of the entry, otherwise, try the date of the feed
 			try:
-				p.date = timelib.strtodatetime(re.sub('\|','', entry.date)).strftime("%Y-%m-%d %H:%M:%S")
+				entry_date = re.sub('\|','', entry.date)
+				entry_date = timelib.strtotime(entry_date) # convert to a timestamp
+				entry_date = time.localtime(entry_date) # converts to a time.struct_time (with regards to local timezone)
+				entry_date = time.strftime("%Y-%m-%d %H:%M:%S", entry_date) # converts to mysql date format
+				p.date = entry_date
 			except AttributeError:
 				p.date =  time.strftime("%Y-%m-%d %H:%M:%S",feed.date)
 
