@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from partner_feeds import tasks
+from django.template.defaultfilters import slugify
 
 # If we can import caching (IE, CacheMachine is installed) then use it
 try:
@@ -32,10 +33,18 @@ class Partner(BaseModel):
 	"""
 	
 	logo = models.ImageField(upload_to=PARTNERS_UPLOAD_PATH, blank=True)
+	
 	name = models.CharField(max_length=75)
+	
 	url  = models.URLField('URL', help_text='Partner Website')
+	
 	feed_url = models.URLField('Feed URL', help_text='URL of a RSS or ATOM feed', unique=True)
+	
 	date_feed_updated = models.DateTimeField('Feed last updated', null=True, blank=True)
+
+	@property
+	def slug(self):
+		return slugify(self.name)
 
 	def __unicode__(self):
 		return u"%s" % self.name
@@ -56,9 +65,13 @@ class Post(BaseModel):
 	"""
 	
 	partner = models.ForeignKey(Partner)
+	
 	title = models.CharField(max_length=255)
+	
 	url = models.URLField(verify_exists=False)
+	
 	guid = models.CharField(max_length=255, unique=True)
+	
 	date = models.DateTimeField()
 
 	def __unicode__(self):
