@@ -2,6 +2,9 @@ from celery.decorators import task
 
 @task(ignore_result=True)
 def update_all_partner_posts():
+	return update_all_partner_posts_task(celery=True)
+	
+def update_all_partner_posts_task(celery=True):
 	"""
 	Fetch all partners, and for each one, pass the feed_url to update_posts_for_feed
 	"""
@@ -11,13 +14,19 @@ def update_all_partner_posts():
 	partners = Partner.objects.all()
 	for partner in partners:
 		# find all the posts in the current partner feeds and update them
-		update_posts_for_feed.delay(partner)
-
+		if celery:
+			update_posts_for_feed.delay(partner)
+		else:
+			update_posts_for_feed(partner)
+			
 		# Set the current time as when the partner feed was last retrieved
 		Partner.objects.filter(pk=partner.pk).update(date_feed_updated=datetime.now())
-
+		
 @task(ignore_result=True)
 def update_posts_for_feed(partner):
+	return update_posts_for_feed_task(partner)
+	
+def update_posts_for_feed_task(partner):
 	"""
 	Load and parse the RSS or ATOM feed associated with the given feed url, and for each entry, parse out the individual
 	entries and save each one as a partner_feeds.
@@ -59,6 +68,9 @@ def update_posts_for_feed(partner):
 
 @task(ignore_result=True)
 def delete_old_posts(num_posts_to_keep=20):
+	return delete_old_posts(num_posts_to_keep=20, celery=True)
+	
+def delete_old_posts(num_posts_to_keep=20, celery=True):
 	""" 
 	Fetch all partners, and for each partner,
 	delete all but `num_posts_to_keep` number of posts
@@ -66,9 +78,13 @@ def delete_old_posts(num_posts_to_keep=20):
 	from partner_feeds.models import Partner
 
 	partners = Partner.objects.all()
+	
 	for partner in partners:
-		delete_old_posts_for_partner.delay(partner, num_posts_to_keep)
-		
+		if celery: 
+			delete_old_posts_for_partner.delay(partner, num_posts_to_keep)
+		else:
+			delete_old_posts_for_partner(partner, num_posts_to_keep)
+			
 @task(ignore_result=True)
 def delete_old_posts_for_partner(partner, num_posts_to_keep=20):
 	"""
@@ -77,5 +93,7 @@ def delete_old_posts_for_partner(partner, num_posts_to_keep=20):
 	the IDs of the posts that we want to keep and then exclude them from the delete.	
 	"""
 	from partner_feeds.models import Post
+	
 	recent_posts = list(Post.objects.filter(partner=partner).values_list('id', flat=True)[:num_posts_to_keep])
+	
 	Post.objects.filter(partner=partner).exclude(pk__in=recent_posts).delete()
