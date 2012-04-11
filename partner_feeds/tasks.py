@@ -51,7 +51,7 @@ def update_posts_for_feed_task(partner):
 
 			p.url = entry.link
 
-			# try to get the date of the entry, otherwise, try the date of the feed
+			# try to get the date of the entry from either 'date' or 'published', otherwise, try the date of the feed
 			try:
 				entry_date = re.sub('\|','', entry.date)
 				entry_date = timelib.strtotime(entry_date) # convert to a timestamp
@@ -59,9 +59,31 @@ def update_posts_for_feed_task(partner):
 				entry_date = time.strftime("%Y-%m-%d %H:%M:%S", entry_date) # converts to mysql date format
 				p.date = entry_date
 			except AttributeError:
-				p.date =  time.strftime("%Y-%m-%d %H:%M:%S",feed.date)
+				try:
+					entry_date = re.sub('\|','', entry.published)
+					entry_date = timelib.strtotime(entry_date) # convert to a timestamp
+					entry_date = time.localtime(entry_date) # converts to a time.struct_time (with regards to local timezone)
+					entry_date = time.strftime("%Y-%m-%d %H:%M:%S", entry_date) # converts to mysql date format
+					p.date = entry_date
+				except AttributeError:
+					entry_date = timelib.strtotime(feed.date) # convert to a timestamp
+					entry_date = time.localtime(entry_date) # converts to a time.struct_time (with regards to local timezone)					
+					p.date =  time.strftime("%Y-%m-%d %H:%M:%S",entry_date)				
+
+			# try to get the description if available
+			try:
+				p.description = entry.description
+			except:
+				pass
+
+			# try to get the image url if available
+			try:
+				p.image_url = entry.media_content[0]['url']
+			except:
+				pass
 
 			p.save()
+
 		except AttributeError:
 			# needs logging
 			pass
