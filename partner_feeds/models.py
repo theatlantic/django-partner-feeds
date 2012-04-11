@@ -74,6 +74,10 @@ class Post(BaseModel):
 	
 	date = models.DateTimeField()
 
+	image_url = models.URLField(verify_exists=False,null=True,blank=True)
+
+	description = models.TextField(null=True,blank=True)
+
 	def __unicode__(self):
 		return self.title
 
