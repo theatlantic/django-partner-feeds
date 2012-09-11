@@ -47,7 +47,7 @@ class Partner(Mixin, models.Model):
         """ When saving a parter update it's related posts as an asynchronous Celery task
         """
         super(Partner, self).save(*args, **kwargs)
-        tasks.update_posts_for_feed.apply_async([self, ])
+        tasks.update_posts_for_feed.delay(self)
 
 
 class Post(Mixin, models.Model):
