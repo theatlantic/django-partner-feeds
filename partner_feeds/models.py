@@ -56,8 +56,9 @@ class Post(Mixin, models.Model):
 
     partner = models.ForeignKey(Partner)
     title = models.CharField(max_length=255)
-    url = models.URLField(verify_exists=False)
-    guid = models.CharField(max_length=255, unique=True)
+    url = models.URLField('URL', verify_exists=False)
+    guid = models.CharField('GUID', max_length=255, unique=True)
+    byline = models.CharField(max_length=255, blank=True, default='')
     date = models.DateTimeField()
     image_url = models.URLField(verify_exists=False, null=True, blank=True)
     description = models.TextField(null=True, blank=True)

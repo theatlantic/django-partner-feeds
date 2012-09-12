@@ -22,7 +22,7 @@ class PartnerAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ['title', 'date', 'partner', ]
+    list_display = ['title', 'byline', 'date', 'partner', ]
     ordering = ['-date']
 
     def formfield_for_dbfield(self, field, **kwargs):

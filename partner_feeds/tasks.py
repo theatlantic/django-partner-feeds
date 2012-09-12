@@ -29,6 +29,7 @@ def update_posts_for_feed(partner):
     import timelib
     import time
     from datetime import datetime
+    from django.utils.text import get_text_list
 
     feed = parse(partner.feed_url)
 
@@ -62,6 +63,12 @@ def update_posts_for_feed(partner):
 
             if 'media_content' in entry and 'url' in entry.media_content[0]:
                 p.image_url = entry.media_content[0]['url']
+
+            if 'authors' in entry and entry.authors[0]:
+                authors = [a['name'] for a in entry.authors if 'name' in a]
+                p.byline = get_text_list(authors)
+            elif 'author' in entry:
+                p.byline = entry.author
 
             p.save()
 
