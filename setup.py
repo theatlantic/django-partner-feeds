@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='Partner Feeds',
-    version='1.0.1',
+    version='2.0',
     author_email='ATMOprogrammers@theatlantic.com',
     packages=['partner_feeds'],
     url='https://github.com/theatlantic/django-partner-feeds',
