@@ -58,7 +58,19 @@ def update_posts_for_feed(partner):
             entry_date = time.strftime("%Y-%m-%d %H:%M:%S", entry_date)  # converts to mysql date format
             p.date = entry_date
 
-            if 'description' in entry:
+            # feedparser doesn't seem to save the ATOM summary tag to
+            # entry.description, but the summary is saved as one of the
+            # rows in the entry.content list
+            #
+            # To find the summary, we loop through the list and
+            # use the smallest field
+            if 'content' in entry and len(entry.content) > 1:
+                summary = entry.content.pop(0)['value']
+                for content in entry.content:
+                    if len(content['value']) < len(summary):
+                        summary = content['value']
+                p.description = summary
+            elif 'description' in entry:
                 p.description = entry.description
 
             if 'media_content' in entry and 'url' in entry.media_content[0]:
