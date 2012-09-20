@@ -78,7 +78,7 @@ def update_posts_for_feed(partner):
 
             if 'authors' in entry and entry.authors[0]:
                 authors = [a['name'] for a in entry.authors if 'name' in a]
-                p.byline = get_text_list(authors)
+                p.byline = get_text_list(authors, 'and')
             elif 'author' in entry:
                 p.byline = entry.author
 
