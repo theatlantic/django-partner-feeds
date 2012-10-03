@@ -1,6 +1,6 @@
-=================
-Partner Feeds v1.0
-=================
+================
+Partner Feeds 2
+================
 
 ``Partner Feeds`` is Django application which will read posts from an RSS or ATOM feeds and save them into a database for
 easy retrieval.
@@ -41,6 +41,7 @@ Data Model
 	* ``title`` - CharField
 	* ``url`` - URLField
 	* ``guid`` - CharField, used to identify the posts for updates
-	* ``date`` - DateTimeField
+	* ``date`` - DateTimeField, date published of post, or of the feed, or failing that, the date the date the post was updated
+	* ``byline`` - CharField, human formated string of any authors for this article
 	
 

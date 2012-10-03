@@ -51,11 +51,22 @@ def update_posts_for_feed(partner):
                 entry_date = entry.date
             elif 'published' in entry:
                 entry_date = entry.published
-            else:
+            elif 'date' in feed:
                 entry_date = feed.date
-            entry_date = timelib.strtotime(entry_date)  # convert to a timestamp
-            entry_date = time.localtime(entry_date)  # converts to a time.struct_time (with regards to local timezone)
-            entry_date = time.strftime("%Y-%m-%d %H:%M:%S", entry_date)  # converts to mysql date format
+            else:
+                entry_date = None
+
+            # entry.date and entry.published appear to be strings while
+            # feed.date is a time.struct_time for some reason
+            if type(entry_date) is not time.struct_time:
+                entry_date = timelib.strtotime(entry_date)  # convert to a timestamp
+                entry_date = time.localtime(entry_date)  # converts to a time.struct_time (with regards to local timezone)
+
+            if entry_date is not None:
+                entry_date = time.strftime("%Y-%m-%d %H:%M:%S", entry_date)  # converts to mysql date format
+            else:
+                entry_date = time.strftime("%Y-%m-%d %H:%M:%S")
+
             p.date = entry_date
 
             # feedparser doesn't seem to save the ATOM summary tag to
