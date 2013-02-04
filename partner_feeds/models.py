@@ -71,12 +71,12 @@ class Post(Mixin, models.Model):
 
     def save(self, *args, **kwargs):
         """
-        If a post with the same GUID already exists,
+        If a post with the same partner_id and GUID already exists,
         then it is the same post so we should use it's ID when saving.
         """
 
         if not self.pk:
-            old_post = Post.objects.filter(guid=self.guid)
+            old_post = Post.objects.filter(partner_id=self.partner_id, guid=self.guid)
             if len(old_post) > 0:
                 self.pk = old_post[0].pk
         super(Post, self).save(*args, **kwargs)
