@@ -57,11 +57,14 @@ class Post(Mixin, models.Model):
     partner = models.ForeignKey(Partner)
     title = models.CharField(max_length=255)
     url = models.URLField('URL', verify_exists=False)
-    guid = models.CharField('GUID', max_length=255, unique=True)
+    guid = models.CharField('GUID', max_length=255)
     byline = models.CharField(max_length=255, blank=True, default='')
     date = models.DateTimeField()
     image_url = models.URLField(verify_exists=False, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("guid", "partner")
 
     def __unicode__(self):
         return self.title
@@ -76,7 +79,7 @@ class Post(Mixin, models.Model):
         """
 
         if not self.pk:
-            old_post = Post.objects.filter(partner_id=self.partner_id, guid=self.guid)
+            old_post = Post.objects.filter(partner__id=self.partner.id, guid=self.guid)
             if len(old_post) > 0:
                 self.pk = old_post[0].pk
         super(Post, self).save(*args, **kwargs)
