@@ -2,8 +2,9 @@ import os
 
 from django.conf import settings
 from django.db import models
-from partner_feeds import tasks
 from django.template.defaultfilters import slugify
+
+from .tasks import update_posts_for_feed
 
 # If we can import caching (IE, CacheMachine is installed) then use it
 try:
@@ -47,7 +48,7 @@ class Partner(Mixin, models.Model):
         """ When saving a parter update it's related posts as an asynchronous Celery task
         """
         super(Partner, self).save(*args, **kwargs)
-        tasks.update_posts_for_feed.delay(self)
+        update_posts_for_feed.delay(self)
 
 
 class Post(Mixin, models.Model):

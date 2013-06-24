@@ -1,6 +1,8 @@
 from django.contrib import admin
-from partner_feeds.models import Partner, Post
-from settings import STATIC_URL
+from django.conf import settings
+
+from .models import Partner, Post
+
 try:
     from ckeditor.widgets import CKEditorWidget
 except ImportError:
@@ -12,7 +14,7 @@ class PartnerAdmin(admin.ModelAdmin):
 
     def display_logo(self, instance):
         if instance.logo:
-            return '<img src="{0}{1}" />'.format(STATIC_URL, instance.logo)
+            return '<img src="{}{}" />'.format(settings.STATIC_URL, instance.logo)
         else:
             return ''
     display_logo.allow_tags = True
