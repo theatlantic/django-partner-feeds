@@ -6,7 +6,10 @@ register = template.Library()
 def get_partners(*args):
     partners = []
     for name in args:
-        partner = Partner.objects.get(name=name)
+        try:
+            partner = Partner.objects.get(name=name)
+        except Partner.DoesNotExist:
+            continue
         partner.posts = partner.post_set.all().order_by('-date')
         partners.append(partner)
     return partners
