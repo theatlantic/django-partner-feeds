@@ -17,16 +17,11 @@ except ImportError:
         pass
 
 
-# set the upload path
-PARTNERS_UPLOAD_PATH = getattr(settings, 'PARTNER_FEED_UPLOAD_PATH',
-                               os.path.join(settings.MEDIA_ROOT, 'partner_logos'))
-
-
 class Partner(Mixin, models.Model):
     """ The partner who's RSS or ATOM formated content we want to retrieve and save in the database
     """
 
-    logo = models.ImageField(upload_to=PARTNERS_UPLOAD_PATH, blank=True)
+    logo = models.ImageField(upload_to='img/partner-logos/', blank=True)
     name = models.CharField(max_length=75)
     url = models.URLField('URL', help_text='Partner Website')
     feed_url = models.URLField(

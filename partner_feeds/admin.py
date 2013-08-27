@@ -14,7 +14,7 @@ class PartnerAdmin(admin.ModelAdmin):
 
     def display_logo(self, instance):
         if instance.logo:
-            return '<img src="{}{}" />'.format(settings.STATIC_URL, instance.logo)
+            return '<img src="{}{}" />'.format(settings.MEDIA_URL, instance.logo)
         else:
             return ''
     display_logo.allow_tags = True
