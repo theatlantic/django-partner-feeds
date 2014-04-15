@@ -26,6 +26,7 @@ class PartnerAdmin(admin.ModelAdmin):
 class PostAdmin(admin.ModelAdmin):
     list_display = ['title', 'byline', 'date', 'partner', ]
     ordering = ['-date']
+    list_filter = ['partner',]
 
     def formfield_for_dbfield(self, field, **kwargs):
         if field.name == 'description':
