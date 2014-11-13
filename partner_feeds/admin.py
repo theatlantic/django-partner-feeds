@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.conf import settings
+from django.utils.safestring import mark_safe
+from django.utils.html import escape
 
 from .models import Partner, Post
 
@@ -23,8 +25,17 @@ class PartnerAdmin(admin.ModelAdmin):
     fields = ['name', 'logo', 'url', 'feed_url']
 
 
+_link_template = u'<a href="{url}" class="rounded-button blue " target="_blank">{title}</a> '
+
+def title(instance):
+    return mark_safe(_link_template.format(url=escape(instance.url), title=escape(instance.title)))
+
+title.short_description = "Title"
+title.allow_tags = True
+
+
 class PostAdmin(admin.ModelAdmin):
-    list_display = ['title', 'byline', 'date', 'partner', ]
+    list_display = [title, 'byline', 'date', 'partner']
     ordering = ['-date']
     list_filter = ['partner',]
 
@@ -35,6 +46,20 @@ class PostAdmin(admin.ModelAdmin):
             except NameError:
                 pass
         return super(PostAdmin, self).formfield_for_dbfield(field, **kwargs)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        # Django sends an obj of None to ask whether you're allowed to
+        # see the change list at all, so kick the question upstairs
+        if obj is None:
+            return super(PostAdmin, self).has_change_permission(request, obj)
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 admin.site.register(Partner, PartnerAdmin)
 admin.site.register(Post, PostAdmin)
