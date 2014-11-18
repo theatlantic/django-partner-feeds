@@ -25,19 +25,19 @@ class PartnerAdmin(admin.ModelAdmin):
     fields = ['name', 'logo', 'url', 'feed_url']
 
 
-_link_template = u'<a href="{url}" class="rounded-button blue " target="_blank">{title}</a> '
-
-def title(instance):
-    return mark_safe(_link_template.format(url=escape(instance.url), title=escape(instance.title)))
-
-title.short_description = "Title"
-title.allow_tags = True
-
-
 class PostAdmin(admin.ModelAdmin):
-    list_display = [title, 'byline', 'date', 'partner']
+    list_display = ['title', 'byline', 'date', 'partner', 'link']
     ordering = ['-date']
     list_filter = ['partner',]
+
+    def link(self, instance):
+        return mark_safe(
+            u'<a href="{url}" class="rounded-button small" target="_blank">'
+            u'<img src="{static_url}custom_admin/img/icons/icon-tools-viewsite-link.png" alt="Link">'
+            u'</a>'.format(url=escape(instance.url), static_url=settings.STATIC_URL))
+
+    link.short_description = "Link"
+    link.allow_tags = True
 
     def formfield_for_dbfield(self, field, **kwargs):
         if field.name == 'description':
