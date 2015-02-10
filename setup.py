@@ -11,7 +11,6 @@ setup(
     install_requires=[
         "Django >= 1.2",
         "celery >= 2.1.4",
-        "django-celery >= 2.1.4",
         "feedparser >= 5",
         "timelib",
     ],
