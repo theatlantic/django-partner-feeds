@@ -52,11 +52,11 @@ class Post(Mixin, models.Model):
 
     partner = models.ForeignKey(Partner)
     title = models.CharField(max_length=255)
-    url = models.URLField('URL', verify_exists=False)
+    url = models.URLField('URL')
     guid = models.CharField('GUID', max_length=255)
     byline = models.CharField(max_length=255, blank=True, default='')
     date = models.DateTimeField()
-    image_url = models.URLField(verify_exists=False, null=True, blank=True)
+    image_url = models.URLField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
     class Meta:
