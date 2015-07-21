@@ -1,64 +1,79 @@
-# encoding: utf-8
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-class Migration(SchemaMigration):
-    
-    def forwards(self, orm):
-        
-        # Adding model 'Partner'
-        db.create_table('partner_feeds_partner', (
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=75)),
-            ('feed_url', self.gf('django.db.models.fields.URLField')(unique=True, max_length=200)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=200)),
-            ('date_feed_updated', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('logo', self.gf('django.db.models.fields.files.ImageField')(max_length=100, blank=True)),
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        ))
-        db.send_create_signal('partner_feeds', ['Partner'])
+from django.db import models, migrations
+import partner_feeds.models
 
-        # Adding model 'Post'
-        db.create_table('partner_feeds_post', (
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=200)),
-            ('date', self.gf('django.db.models.fields.DateTimeField')()),
-            ('partner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['partner_feeds.Partner'])),
-            ('guid', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        ))
-        db.send_create_signal('partner_feeds', ['Post'])
-    
-    
-    def backwards(self, orm):
-        
-        # Deleting model 'Partner'
-        db.delete_table('partner_feeds_partner')
 
-        # Deleting model 'Post'
-        db.delete_table('partner_feeds_post')
-    
-    
-    models = {
-        'partner_feeds.partner': {
-            'Meta': {'object_name': 'Partner'},
-            'date_feed_updated': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'feed_url': ('django.db.models.fields.URLField', [], {'unique': 'True', 'max_length': '200'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'logo': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '75'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'})
-        },
-        'partner_feeds.post': {
-            'Meta': {'object_name': 'Post'},
-            'date': ('django.db.models.fields.DateTimeField', [], {}),
-            'guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'partner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['partner_feeds.Partner']"}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'})
-        }
-    }
-    
-    complete_apps = ['partner_feeds']
+class Migration(migrations.Migration):
+
+    dependencies = [
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='Partner',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('logo', models.ImageField(upload_to=b'img/partner-logos/', blank=True)),
+                ('name', models.CharField(max_length=75)),
+                ('url', models.URLField(help_text=b'Partner Website', verbose_name=b'URL')),
+                ('feed_url', models.URLField(help_text=b'URL of a RSS or ATOM feed', unique=True, verbose_name=b'Feed URL')),
+                ('date_feed_updated', models.DateTimeField(null=True, verbose_name=b'Feed last updated', blank=True)),
+            ],
+            options={
+            },
+            bases=(partner_feeds.models.Mixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='Post',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(max_length=255)),
+                ('url', models.URLField(verbose_name=b'URL')),
+                ('guid', models.CharField(max_length=255, verbose_name=b'GUID')),
+                ('byline', models.CharField(default=b'', max_length=255, blank=True)),
+                ('date', models.DateTimeField()),
+                ('image_url', models.URLField(null=True, blank=True)),
+                ('description', models.TextField(null=True, blank=True)),
+                ('partner', models.ForeignKey(to='partner_feeds.Partner')),
+            ],
+            options={
+                'ordering': ('-date',),
+            },
+            bases=(partner_feeds.models.Mixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='CitiesPartnerPost',
+            fields=[
+            ],
+            options={
+                'verbose_name': 'Cities Post',
+                'proxy': True,
+                'verbose_name_plural': 'Cities Posts',
+            },
+            bases=('partner_feeds.post',),
+        ),
+        migrations.CreateModel(
+            name='QuartzPartnerPost',
+            fields=[
+            ],
+            options={
+                'verbose_name': 'Quartz Post',
+                'proxy': True,
+                'verbose_name_plural': 'Quartz Posts',
+            },
+            bases=('partner_feeds.post',),
+        ),
+        migrations.CreateModel(
+            name='WirePartnerPost',
+            fields=[
+            ],
+            options={
+                'verbose_name': 'Wire Post',
+                'proxy': True,
+                'verbose_name_plural': 'Wire Posts',
+            },
+            bases=('partner_feeds.post',),
+        ),
+    ]
