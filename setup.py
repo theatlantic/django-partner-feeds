@@ -7,7 +7,7 @@ except ImportError:
 
 
 setup(
-    name='Partner Feeds',
+    name='django-partner-feeds',
     version=__import__('partner_feeds').__version__,
     author_email='ATMOprogrammers@theatlantic.com',
     packages=find_packages(),
